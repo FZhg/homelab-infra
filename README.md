@@ -71,7 +71,7 @@ ssh-add            # the provider uses your ssh-agent
 
 ## 2. Prepare your workstation
 
-Install: `tofu`, `kubectl`, `bao` (OpenBao CLI), `yq` (mikefarah v4), `jq`, `openssl`, `git`, `make`, `curl`,
+Install: `tofu`, `kubectl`, `helm`, `bao` (OpenBao CLI), `yq` (mikefarah v4), `jq`, `openssl`, `git`, `make`, `curl`,
 and `etcdctl` for the etcd experiments.
 
 ```bash
@@ -105,7 +105,7 @@ That runs these phases. Each is idempotent, so if one fails, fix it and run that
 | 2 | `make openbao-init` | Init (unseal key + root token → `.local/openbao-init.json`), unseal, load secrets, create AppRoles → `.local/approle.json` |
 | 3 | `make cluster` | Creates etcd1-3, cp1, worker1-3. Each VM fetches its secrets, Puppet builds etcd, runs `kubeadm init`, workers join |
 | 4 | `make kubeconfig` | Waits for `kubeadm init`, copies `admin.conf` to `.local/kubeconfig` |
-| 5 | `make cni` | Installs Flannel, waits until every node is Ready |
+| 5 | `make cni` | Installs Cilium, waits until every node is Ready |
 | 6 | `make argocd` | Installs Argo CD and the root app. From here, git is the source of truth for the cluster |
 | 7 | `make openbao-k8s-auth` | Lets External Secrets Operator log in to OpenBao with its service account |
 

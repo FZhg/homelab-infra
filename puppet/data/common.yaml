@@ -1,5 +1,6 @@
 ---
-# Cluster networking. Flannel's default pod network is 10.244.0.0/16.
+# Pod CIDR. kubeadm assigns a slice to each node; Cilium (ipam.mode=kubernetes)
+# allocates pod IPs from those slices.
 k8s_pod_subnet: "10.244.0.0/16"
 k8s_service_subnet: "10.96.0.0/12"
 

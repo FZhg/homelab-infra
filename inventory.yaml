@@ -29,6 +29,7 @@ versions:
   kubernetes: "1.37.1"     # kubelet/kubeadm/kubectl from pkgs.k8s.io
   etcd: "v3.6.14"          # external etcd cluster
   openbao: "2.7.1"         # OpenBao server package
+  cilium: "1.20.4"         # CNI chart oci://quay.io/cilium/charts/cilium
 
 # One entry per VM. IPs must be free on your LAN (outside your DHCP range).
 # cores = vCPUs, memory in MiB, disk in GiB.

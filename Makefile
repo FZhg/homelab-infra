@@ -13,6 +13,7 @@ ADMIN          = $(shell yq '.admin.user' $(INV))
 CP_IP          = $(shell yq '[.nodes[] | select(.role == "k8s_control")][0].ip' $(INV))
 K8S_NODES      = $(shell yq '[.nodes[] | select(.role == "k8s_control" or .role == "k8s_worker")] | length' $(INV))
 ETCD_ENDPOINTS = $(shell yq '[.nodes[] | select(.role == "etcd") | "https://" + .ip + ":2379"] | join(",")' $(INV))
+CILIUM_VERSION = $(shell yq '.versions.cilium' $(INV))
 
 .PHONY: help up check pki tf-init openbao openbao-init unseal cluster kubeconfig cni argocd \
         openbao-k8s-auth status etcdctl argocd-password destroy
@@ -24,7 +25,7 @@ up: check pki openbao openbao-init cluster kubeconfig cni argocd openbao-k8s-aut
 	@echo; echo "Lab is up. Try: make status"
 
 check: ## Check workstation tools, token and repo URL
-	@for t in tofu kubectl bao yq jq openssl ssh curl git; do
+	@for t in tofu kubectl helm bao yq jq openssl ssh curl git; do
 	  command -v $$t >/dev/null || { echo "missing tool: $$t"; exit 1; }
 	done
 	test -n "$${PROXMOX_VE_API_TOKEN:-}" || { echo "export PROXMOX_VE_API_TOKEN='tofu@pve!homelab=<uuid>' first"; exit 1; }
@@ -71,8 +72,14 @@ kubeconfig: ## Phase 4: wait for kubeadm init, fetch the admin kubeconfig
 	echo "Timed out. Check on cp1: sudo journalctl -u puppet-apply -e"
 	exit 1
 
-cni: ## Phase 5: install Flannel, wait for all nodes to be Ready
-	kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+cni: ## Phase 5: install Cilium, wait for all nodes to be Ready
+	# Kubernetes IPAM so pod IPs come from the node CIDRs kubeadm allocated
+	# (k8s_pod_subnet). kube-proxy stays; Cilium's kube-proxy replacement is off.
+	helm upgrade --install cilium oci://quay.io/cilium/charts/cilium \
+	  --version $(CILIUM_VERSION) \
+	  --namespace kube-system \
+	  --set ipam.mode=kubernetes
+	kubectl -n kube-system rollout status ds/cilium --timeout=5m
 	echo "Waiting for $(K8S_NODES) nodes to register..."
 	until [ "$$(kubectl get nodes --no-headers 2>/dev/null | wc -l)" -ge $(K8S_NODES) ]; do sleep 15; done
 	kubectl wait --for=condition=Ready nodes --all --timeout=15m
