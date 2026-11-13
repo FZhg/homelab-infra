@@ -3,8 +3,8 @@
 # Edit the values marked CHANGE ME before your first `make up`.
 
 proxmox:
-  endpoint: https://192.168.1.10:8006/   # CHANGE ME: your Proxmox web UI address
-  node: pve                              # CHANGE ME: node name shown in the PVE sidebar
+  endpoint: https://192.168.2.10:8006/   # CHANGE ME: your Proxmox web UI address
+  node: pve1                              # CHANGE ME: node name shown in the PVE sidebar
   ssh_user: root                         # provider uploads cloud-init snippets over SSH
   vm_datastore: local-lvm                # where VM disks live
   file_datastore: local                  # needs content types "snippets" and "import"
@@ -12,16 +12,16 @@ proxmox:
 
 network:
   prefix: 24
-  gateway: 192.168.1.1                   # CHANGE ME
-  dns: [192.168.1.1]                     # CHANGE ME
-  domain: lab.home
+  gateway: 192.168.2.1                   # CHANGE ME
+  dns: [192.168.2.1]                     # CHANGE ME
+  domain: pve1.home.apra
 
 admin:
   user: ops                              # login user created on every VM
-  ssh_public_key: "ssh-ed25519 AAAA...CHANGE-ME you@laptop"
+  ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJnv5cDZryuEvGJkZSjKm3RVOXlbtepdaps7JVq51Ntt fzhg@mac"
 
 repo:
-  url: https://github.com/YOU/homelab-infra.git   # CHANGE ME (also in k8s/bootstrap/root-app.yaml and k8s/apps/*.yaml)
+  url: https://github.com/fzhg/homelab-infra.git   # CHANGE ME (also in k8s/bootstrap/root-app.yaml and k8s/apps/*.yaml)
   branch: main
 
 versions:
@@ -34,11 +34,11 @@ versions:
 # One entry per VM. IPs must be free on your LAN (outside your DHCP range).
 # cores = vCPUs, memory in MiB, disk in GiB.
 nodes:
-  openbao: { role: openbao,     vmid: 200, ip: 192.168.1.40, cores: 1, memory: 1024,  disk: 10 }
-  etcd1:   { role: etcd,        vmid: 201, ip: 192.168.1.41, cores: 2, memory: 2048,  disk: 20 }
-  etcd2:   { role: etcd,        vmid: 202, ip: 192.168.1.42, cores: 2, memory: 2048,  disk: 20 }
-  etcd3:   { role: etcd,        vmid: 203, ip: 192.168.1.43, cores: 2, memory: 2048,  disk: 20 }
-  cp1:     { role: k8s_control, vmid: 204, ip: 192.168.1.44, cores: 2, memory: 4096,  disk: 40 }
-  worker1: { role: k8s_worker,  vmid: 205, ip: 192.168.1.45, cores: 4, memory: 12288, disk: 150 }
-  worker2: { role: k8s_worker,  vmid: 206, ip: 192.168.1.46, cores: 4, memory: 12288, disk: 150 }
-  worker3: { role: k8s_worker,  vmid: 207, ip: 192.168.1.47, cores: 4, memory: 12288, disk: 150 }
+  openbao: { role: openbao,     vmid: 200, ip: 192.168.2.40, cores: 1, memory: 1024,  disk: 10 }
+  etcd1:   { role: etcd,        vmid: 201, ip: 192.168.2.41, cores: 2, memory: 2048,  disk: 20 }
+  etcd2:   { role: etcd,        vmid: 202, ip: 192.168.2.42, cores: 2, memory: 2048,  disk: 20 }
+  etcd3:   { role: etcd,        vmid: 203, ip: 192.168.2.43, cores: 2, memory: 2048,  disk: 20 }
+  cp1:     { role: k8s_control, vmid: 204, ip: 192.168.2.44, cores: 2, memory: 4096,  disk: 40 }
+  worker1: { role: k8s_worker,  vmid: 205, ip: 192.168.2.45, cores: 4, memory: 12288, disk: 150 }
+  worker2: { role: k8s_worker,  vmid: 206, ip: 192.168.2.46, cores: 4, memory: 12288, disk: 150 }
+  worker3: { role: k8s_worker,  vmid: 207, ip: 192.168.2.47, cores: 4, memory: 12288, disk: 150 }
