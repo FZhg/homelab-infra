@@ -1,0 +1,8 @@
+# Everything secret or machine-specific lives in .local/ and never goes to git.
+.local/
+
+# OpenTofu
+terraform/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log

@@ -1,0 +1,21 @@
+# Argo CD manages its own installation from k8s/bootstrap/argocd.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/YOU/homelab-infra.git   # CHANGE ME
+    targetRevision: main
+    path: k8s/bootstrap/argocd
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: false   # never let Argo CD delete pieces of itself
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true

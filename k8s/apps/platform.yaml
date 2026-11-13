@@ -1,0 +1,30 @@
+# Everything under k8s/platform: the OpenBao ClusterSecretStore, RBAC, and the demo secret.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/YOU/homelab-infra.git   # CHANGE ME
+    targetRevision: main
+    path: k8s/platform
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      # ESO's CRDs may not exist yet on the first sync; retry until they do.
+      - SkipDryRunOnMissingResource=true
+    retry:
+      limit: 10
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 5m

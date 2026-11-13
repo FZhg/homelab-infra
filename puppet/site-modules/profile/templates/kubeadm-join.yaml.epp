@@ -1,0 +1,13 @@
+<%- | String $hostname, String $cp_ip, String $token, String $ca_hash | -%>
+# Managed by Puppet (profile::k8s::worker)
+apiVersion: kubeadm.k8s.io/v1beta4
+kind: JoinConfiguration
+discovery:
+  bootstrapToken:
+    apiServerEndpoint: "<%= $cp_ip %>:6443"
+    token: "<%= $token %>"
+    caCertHashes:
+      - "sha256:<%= $ca_hash %>"
+nodeRegistration:
+  name: "<%= $hostname %>"
+  criSocket: unix:///run/containerd/containerd.sock

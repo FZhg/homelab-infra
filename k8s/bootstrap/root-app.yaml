@@ -1,0 +1,19 @@
+# App of apps: every Application in k8s/apps is created and kept in sync from git.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/YOU/homelab-infra.git   # CHANGE ME
+    targetRevision: main
+    path: k8s/apps
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

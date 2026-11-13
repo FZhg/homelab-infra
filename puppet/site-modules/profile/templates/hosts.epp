@@ -1,0 +1,11 @@
+<%- | Hash $nodes, String $domain | -%>
+# Managed by Puppet (profile::base). Edit inventory.yaml instead.
+127.0.0.1 localhost
+::1       localhost ip6-localhost ip6-loopback
+ff02::1   ip6-allnodes
+ff02::2   ip6-allrouters
+
+# Homelab nodes
+<% $nodes.each |$name, $n| { -%>
+<%= $n['ip'] %> <%= $name %>.<%= $domain %> <%= $name %>
+<% } -%>

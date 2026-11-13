@@ -1,0 +1,53 @@
+#cloud-config
+# First-boot only. Everything after this is Puppet's job (scripts/node/bootstrap.sh).
+hostname: ${hostname}
+fqdn: ${hostname}.${domain}
+manage_etc_hosts: false   # Puppet writes /etc/hosts for the whole lab
+
+users:
+  - name: ${admin_user}
+    groups: [sudo]
+    shell: /bin/bash
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ${ssh_public_key}
+
+package_update: true
+packages: [qemu-guest-agent, git, jq, curl, ca-certificates, gnupg]
+
+write_files:
+  # The one fact Puppet needs to pick this node's role.
+  - path: /etc/puppetlabs/facter/facts.d/role.txt
+    content: "role=${role}\n"
+  # Homelab CA, so every node trusts OpenBao's TLS certificate.
+  - path: /usr/local/share/ca-certificates/homelab-ca.crt
+    permissions: "0644"
+    content: |
+      ${indent(6, ca_cert)}
+%{ if role == "openbao" ~}
+  # OpenBao's own TLS cert/key; profile::openbao copies them into place.
+  - path: /etc/openbao-bootstrap/tls.crt
+    permissions: "0644"
+    content: |
+      ${indent(6, tls_cert)}
+  - path: /etc/openbao-bootstrap/tls.key
+    permissions: "0600"
+    content: |
+      ${indent(6, tls_key)}
+%{ else ~}
+  # How this node logs in to OpenBao (read by scripts/node/fetch-secrets.sh).
+  - path: /etc/homelab/openbao.env
+    permissions: "0600"
+    content: |
+      BAO_ADDR=${bao_addr}
+      ROLE_ID=${role_id}
+      SECRET_ID=${secret_id}
+      SECRET_PATHS="${secret_paths}"
+%{ endif ~}
+
+runcmd:
+  - [systemctl, enable, --now, qemu-guest-agent]
+  - [update-ca-certificates]
+  - [git, clone, --branch, "${repo_branch}", "${repo_url}", /opt/infra]
+  - [/opt/infra/scripts/node/bootstrap.sh]

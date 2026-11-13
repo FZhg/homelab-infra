@@ -1,0 +1,17 @@
+<%- | String $ip, String $hostname | -%>
+# Managed by Puppet (profile::openbao)
+ui           = true
+api_addr     = "https://<%= $ip %>:8200"
+cluster_addr = "https://<%= $ip %>:8201"
+
+storage "raft" {
+  path    = "/opt/openbao/data"
+  node_id = "<%= $hostname %>"
+}
+
+listener "tcp" {
+  address         = "0.0.0.0:8200"
+  cluster_address = "0.0.0.0:8201"
+  tls_cert_file   = "/etc/openbao/tls/tls.crt"
+  tls_key_file    = "/etc/openbao/tls/tls.key"
+}

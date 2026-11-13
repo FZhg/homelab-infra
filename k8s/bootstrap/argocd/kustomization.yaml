@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: argocd
+resources:
+  - namespace.yaml
+  # Bump the tag to upgrade Argo CD; it manages itself through k8s/apps/argocd.yaml.
+  - https://raw.githubusercontent.com/argoproj/argo-cd/v3.6.1/manifests/install.yaml

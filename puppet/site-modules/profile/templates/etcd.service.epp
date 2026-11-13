@@ -1,0 +1,38 @@
+<%- | String $member_name, String $ip, String $initial_cluster, String $state | -%>
+# Managed by Puppet (profile::etcd)
+[Unit]
+Description=etcd member <%= $member_name %>
+Documentation=https://etcd.io/docs/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+User=etcd
+ExecStart=/usr/local/bin/etcd \
+  --name=<%= $member_name %> \
+  --data-dir=/var/lib/etcd \
+  --listen-client-urls=https://<%= $ip %>:2379,https://127.0.0.1:2379 \
+  --advertise-client-urls=https://<%= $ip %>:2379 \
+  --listen-peer-urls=https://<%= $ip %>:2380 \
+  --initial-advertise-peer-urls=https://<%= $ip %>:2380 \
+  --initial-cluster=<%= $initial_cluster %> \
+  --initial-cluster-state=<%= $state %> \
+  --initial-cluster-token=homelab-etcd \
+  --client-cert-auth \
+  --trusted-ca-file=/etc/etcd/pki/ca.crt \
+  --cert-file=/etc/etcd/pki/server.crt \
+  --key-file=/etc/etcd/pki/server.key \
+  --peer-client-cert-auth \
+  --peer-trusted-ca-file=/etc/etcd/pki/ca.crt \
+  --peer-cert-file=/etc/etcd/pki/server.crt \
+  --peer-key-file=/etc/etcd/pki/server.key \
+  --listen-metrics-urls=http://127.0.0.1:2381
+Restart=always
+RestartSec=5
+# The first member waits for the others to reach quorum.
+TimeoutStartSec=300
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

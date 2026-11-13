@@ -1,0 +1,9 @@
+[Unit]
+Description=Pull /opt/infra and run puppet apply
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/infra/scripts/node/puppet-apply.sh
+TimeoutStartSec=45min

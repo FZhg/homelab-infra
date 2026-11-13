@@ -1,0 +1,14 @@
+---
+# Cluster networking. Flannel's default pod network is 10.244.0.0/16.
+k8s_pod_subnet: "10.244.0.0/16"
+k8s_service_subnet: "10.96.0.0/12"
+
+# "new" when the etcd cluster is first created. Override per node in data/nodes/<name>.yaml
+# with "existing" when you replace a member (see README, etcd experiments).
+etcd_initial_cluster_state: "new"
+
+# Let data/nodes/<host>.yaml override a single version (e.g. versions.etcd during a rolling
+# upgrade) while the other versions still come from inventory.yaml.
+lookup_options:
+  versions:
+    merge: deep

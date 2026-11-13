@@ -1,0 +1,25 @@
+---
+version: 5
+
+defaults:
+  datadir: data
+  data_hash: yaml_data
+
+hierarchy:
+  # Fetched from OpenBao by scripts/node/fetch-secrets.sh. Root-only, never in git.
+  - name: "Secrets from OpenBao"
+    datadir: /etc/puppetlabs/secrets
+    data_hash: json_data
+    path: secrets.json
+
+  # Optional one-off overrides, e.g. data/nodes/etcd2.yaml
+  - name: "Per-node overrides"
+    path: "nodes/%{facts.networking.hostname}.yaml"
+
+  # inventory.yaml at the repo root, shared with OpenTofu.
+  - name: "Inventory"
+    datadir: ..
+    path: inventory.yaml
+
+  - name: "Common"
+    path: common.yaml
