@@ -71,8 +71,9 @@ ssh-add            # the provider uses your ssh-agent
 
 ## 2. Prepare your workstation
 
-Install: `tofu`, `kubectl`, `helm`, `bao` (OpenBao CLI), `yq` (mikefarah v4), `jq`, `openssl`, `git`, `make`, `curl`,
-and `etcdctl` for the etcd experiments.
+Install: `tofu`, `kubectl`, `helm`, `bao` (OpenBao CLI), `yq` (mikefarah v4), `jq`, `openssl`, `git`, `curl`,
+GNU Make 4 or newer, and `etcdctl` for the etcd experiments. macOS `/usr/bin/make` is 3.81 and cannot run
+this Makefile; `brew install make` provides `gmake`.
 
 ```bash
 export PROXMOX_VE_API_TOKEN='tofu@pve!homelab=<uuid-from-step-1>'

@@ -4,6 +4,13 @@ SHELL         := /bin/bash
 .ONESHELL:
 .DEFAULT_GOAL := help
 
+# .ONESHELL needs GNU Make 4. macOS /usr/bin/make is 3.81 and runs each recipe
+# line in its own shell, so the loops below die with "unexpected end of file".
+MAKE_MAJOR := $(firstword $(subst ., ,$(MAKE_VERSION)))
+ifneq (ok,$(shell test $(MAKE_MAJOR) -ge 4 && echo ok))
+$(error GNU Make >= 4 is required (found $(MAKE_VERSION)). On macOS: brew install make, then run gmake)
+endif
+
 INV  := inventory.yaml
 TF   := tofu -chdir=terraform
 SSH  := ssh -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=$(CURDIR)/.local/known_hosts
