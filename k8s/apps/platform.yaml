@@ -1,4 +1,4 @@
-# Everything under k8s/platform: the OpenBao ClusterSecretStore, RBAC, and the demo secret.
+# Cluster wiring: the OpenBao ClusterSecretStore and the External Secrets token review RBAC.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

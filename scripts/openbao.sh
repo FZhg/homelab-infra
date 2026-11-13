@@ -113,7 +113,7 @@ EOF
     bao kv put kv/infra/proxmox api_token="$PROXMOX_VE_API_TOKEN" >/dev/null
   fi
 
-  # A demo app secret, synced into Kubernetes by k8s/platform/demo.
+  # A demo app secret, synced into Kubernetes by k8s/demo.
   bao kv get kv/apps/demo >/dev/null 2>&1 ||
     bao kv put kv/apps/demo username=demo password="$(openssl rand -hex 12)" >/dev/null
 

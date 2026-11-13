@@ -42,8 +42,9 @@ scripts/
   node/                        bootstrap, puppet-apply timer, fetch-secrets (run on VMs)
 k8s/
   bootstrap/                   Argo CD install + root app (applied once by make)
-  apps/                        Applications Argo CD syncs (argocd, external-secrets, platform)
-  platform/                    ClusterSecretStore, RBAC, demo ExternalSecret
+  apps/                        Applications Argo CD syncs (argocd, external-secrets, platform, demo)
+  platform/                    ClusterSecretStore, External Secrets RBAC
+  demo/                        demo namespace, ExternalSecret, podinfo
 ```
 
 ## 1. Prepare Proxmox (once)
